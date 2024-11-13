@@ -1,0 +1,270 @@
+---
+title: "STAT 184 - Final Project Report\ Topic - Spotify Music Data Analysis using R"
+author: "Apoorv Thite and Aarnav Putta"
+date: "25th April, 2024"
+output: pdf_document
+geometry: left=0.5in,right=0.5in,top=0.5in,bottom=0.5in
+urlcolor: blue
+---
+
+```{r setupFiles, include = FALSE}
+# This template file is based off of a template created by Alex Hayes
+# https://github.com/alexpghayes/rmarkdown_homework_template
+
+# Setting Document Options
+knitr::opts_chunk$set(
+  echo = TRUE,
+  warning = FALSE,
+  message = FALSE,
+  fig.align = "center"
+)
+```
+
+```{r}
+library(dplyr) 
+library(tidyverse) 
+```
+
+**Introduction**
+
+In the digital age, music streaming platforms like Spotify have revolutionized how we access and interact with music. These platforms not only provide a vast array of musical content but also collect extensive data on track characteristics and user preferences. Recognizing the potential of this rich dataset, our final project focuses on an exploratory data analysis of SpotifyData.csv, which consists of detailed attributes of various music tracks available on Spotify.
+
+Our project aims to delve deep into the characteristics of these music tracks, such as genre, tempo, energy, and popularity, to uncover underlying patterns and trends that could be valuable for artists, record labels, and marketers. By analyzing this dataset, we hope to identify factors that significantly influence a track's success and listener preferences, potentially predicting future trends in music consumption.\
+
+**Main Goal / Guiding Research Question**
+
+The primary question guiding our analysis is: "How do the characteristics of music (like tempo, valence, and energy) vary by genre, and also influence a track's popularity on Spotify?" This question will help us understand the trends and preferences in music consumption over a specific period and across different musical genres.
+
+This guiding question serves as the backbone of our analysis and is crucial for several reasons:
+
+-   We intend to dissect various musical attributes to see how they correlate with each other and how they contribute to a song's popularity. For instance, does a higher tempo correlate with more energetic genres like dance music, and does this result in higher popularity ratings on Spotify?
+
+-   By examining how these musical characteristics vary across different genres, we aim to uncover genre-specific trends in music consumption.
+
+-   The insights derived from answering this question have practical implications for music production and marketing strategies. Artists and record labels can use this information to tailor their music to align with listener preferences, potentially increasing the likelihood of achieving higher engagement and popularity.
+
+**Where did you find them?**
+
+For our project, we sourced our datasets from two prominent online platforms known for their comprehensive repositories of data: DataCamp and Kaggle. The primary dataset, **`SpotifyData.csv`**, was obtained from Kaggle, a platform that hosts a wide range of community-generated datasets. This dataset includes various attributes of music tracks on Spotify, such as genre, tempo, and popularity, providing a rich base for our analysis. The secondary dataset was sourced from DataCamp, which is often utilized for educational purposes and practical exercises in data science. This dataset complements our primary data by providing additional variables that enable a deeper exploration of music track characteristics and listener preferences. Together, these datasets form the cornerstone of our analysis, allowing us to investigate and understand the intricate dynamics of music popularity on Spotify.
+
+**Who collects/maintains them ?**
+
+Apoorv took the initiative to source the primary dataset from datacamp, which was generated and is regularly updated by a community of data scientists and music enthusiasts. This dataset provides a detailed compilation of Spotify track characteristics, making it ideal for our analysis of music trends. Aarnav, on the other hand, handled the acquisition of the secondary dataset from Kaggle. This dataset, often used for educational purposes, complements the primary dataset with additional data points necessary for a comprehensive analysis. Together,we ensured that we had robust and reliable data, laying a strong foundation for our project
+
+Links to both datasets :
+
+Kaggle - <https://www.kaggle.com/datasets/maharshipandya/-spotify-tracks-dataset?select=dataset.csv>
+
+Datacamp - <https://www.datacamp.com/datalab/w/e6817000-4a9f-40fa-b74f-1d23b9cdb6cb/edit>\
+
+**What does a case represent in each data source, and how many total cases are available?**
+
+Each case in this dataset refers to a specific song with a unique score for every attribute or variable. Each case essentially is classifying a song based on its unique score derived from the combination of variables we have in the datset. With the variables being artist, top genre, year,bpm, nrg, dnce, dB, live, val, dur, acous, spch, popularity. There are totally 114000 cases in this dataset.\
+\
+
+**Loading our Dataset and Initial dataset statistics :**
+
+```{r}
+# Load the SpotifyMusic dataset
+data <- read.csv(file = "dataset.csv", header = TRUE, sep = ",", stringsAsFactors = FALSE)
+
+# Total Number of rows in the dataset
+nrow(data)
+
+# View the first few rows of the data and summary statistics
+head(data)
+
+# Summary of the dataset
+summary(data)
+```
+
+The dataset consists of 114,000 music tracks, each with various characteristics such as duration, danceability, energy, and more. The average track duration is approximately 228,029 ms (around 3 minutes and 48 seconds), with a wide range in popularity scores stretching from 0 to 100. Tracks in the dataset display a variety of musical attributes, including an average danceability of 0.567 and energy level of 0.641. Loudness levels average around -8.259 dB. Tracks show a diverse array of acoustic properties, with an average acousticness of 0.315 and instrumentalness of 0.156, suggesting a mix of vocal-driven and instrumental tracks. The dataset also includes a variety of genres, keys, and tempos, reflecting a broad spectrum of musical styles and preferences.
+
+```{r}
+# sample 10% of the data as an approximate
+spotify_data <- sample_frac(data, 0.1)
+
+names(spotify_data)
+```
+
+\
+**General Data Wrangling and Logistics -**
+
+1)  
+
+```{r}
+# Filter for popular tracks and calculate mean stats by genre
+popular_genre_stats <- 
+  spotify_data %>%
+  filter(popularity > 50) %>%
+  group_by(track_genre) %>%
+  summarise(mean_tempo = mean(tempo, na.rm = TRUE),
+            mean_valence = mean(valence, na.rm = TRUE),
+            mean_energy = mean(energy, na.rm = TRUE))
+head(popular_genre_stats)
+```
+
+Here, we filtered the dataset to focus on tracks with a popularity score above 50, grouping them by genre (track_genre). We then calculated the average beats per minute (tempo), valence (valence), and energy (energy) for each genre, giving insights into the characteristics that correlate with higher popularity on Spotify.
+
+2)  
+
+```{r}
+# Using regular expressions to filter data based on a pattern in track names
+filtered_tracks <- spotify_data %>%
+  filter(grepl("Love", track_name))# Tracks with "Love" in their title
+head(filtered_tracks)
+```
+
+Here, we utilized regular expressions to filter the dataset for tracks with "Love" in their track_name. This operation allowed us to specifically analyze tracks related to a common thematic element, providing focused insights into how songs with "Love" in their title perform in terms of popularity and other musical characteristics.
+
+3)  
+
+```{r}
+# Using Reduction and/or transformation functions
+genre_summary <- spotify_data %>%
+  group_by(track_genre) %>%
+  summarise(max_popularity = max(popularity, na.rm = TRUE),
+            min_tempo = min(tempo, na.rm = TRUE))
+head(genre_summary)
+```
+
+Here, we applied reduction and transformation functions on the dataset to summarize key statistics by genre (track_genre). We computed the maximum popularity (max_popularity) and minimum tempo (min_tempo) for each genre, removing any missing values in the process. This approach allowed us to explore the extremes of popularity and tempo within genres, providing a clearer view of genre-specific trends on Spotify.
+
+4)  
+
+```{r}
+# User-defined functions
+# Define a function to classify tempo into Low, Medium, High
+classify_tempo <- function(tempo) {
+  ifelse(tempo < 100, "Low", ifelse(tempo < 140, "Medium", "High"))}
+
+# Apply the function to the dataset
+spotify_data <- spotify_data %>%
+  mutate(tempo_category = sapply(tempo, classify_tempo))
+
+tempo <- spotify_data %>%
+  group_by(artists) %>%
+  summarise(track_name,track_genre,tempo_category)
+
+head(tempo)
+```
+
+Here, we created a function, classify_tempo, to categorize the tempo (tempo) of tracks into "Low," "Medium," or "High." This classification was based on tempo thresholds, where tempos below 100 are categorized as "Low," those between 100 and 140 as "Medium," and above 140 as "High." We then applied this function across the dataset to assign each track a tempo category, enhancing our ability to analyze how tempo influences track popularity across different categories.
+
+\
+**Data Visualisation** -
+
+```{r}
+spotify2_data <- sample_frac(spotify_data, 0.1)
+```
+
+
+1)  
+
+```{r, out.width=350}
+# 1. Scatter plot with multiple aesthetics (color, size) showing tempo vs popularity
+ggplot(spotify2_data, aes(x = tempo, y = popularity, color=tempo_category)) +
+geom_point(alpha=0.4) +
+labs(title = "Tempo vs Popularity (Sampled)", x = "Tempo", y = "Popularity")
+```
+
+Here, we crafted a scatter plot to visually examine the relationship between tempo and popularity across different music genres in the top 1% (1140 cases of the dataset), using the ggplot2 library. Each point on the plot represents a track, colored by its tempo_category (track_genre), which allows us to discern tempo-specific patterns in how tempo correlates with popularity. We enhanced the plot's clarity using multiple aesthetics such as color for tempo and point transparency, and employed a minimalistic theme for a clean presentation. This visualization aids in understanding if certain tempos are more favorable in specific categories in terms of attracting higher popularity scores.
+
+2)  
+
+```{r,out.width=400}
+ggplot(spotify2_data, aes(x = energy, y = popularity, size = duration_ms)) + 
+  geom_point(alpha = 0.6) +
+  labs(title = 'Energy by Popularity')+
+theme_minimal()
+```
+
+Here,we use the ggplot2 library to construct a scatter plot from the spotify2_data dataset, showcasing the relationship between the energy and popularity of tracks. The x-axis represents the energy, the y-axis shows the popularity, and the size of each point is determined by the track's duration (duration_ms). By setting the alpha parameter to 0.6, we ensure that the points are semi-transparent, which aids in visualizing overlaps in densely populated areas of the plot. This scatter plot, enhanced with a theme_minimal(), offers a clear and straightforward visual representation, highlighting how track energy correlates with popularity while simultaneously displaying variations in track duration.
+
+
+3)  
+
+```{r}
+avg_popularity_by_genre <- spotify2_data %>%
+  group_by(track_genre) %>%
+  filter(track_genre %in% c('party','punk','classical','indian','country','guitar','salsa','electronic','jazz')) %>%
+  summarise(average_popularity = mean(popularity, na.rm = TRUE))
+
+# Create a bar chart to visualize average popularity by genre
+ggplot(avg_popularity_by_genre, aes(x = track_genre, y = average_popularity, fill = track_genre)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Average Popularity of Tracks by certain Genre on Spotify",
+       x = "Genre",
+       y = "Average Popularity") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate genre names for better readability
+```
+
+Here, we calculated the average popularity of tracks by specific genres including 'party', 'punk', 'classical', 'indian', 'country', 'guitar', 'salsa', 'electronic', and 'jazz'. We began by grouping the data by track_genre and filtering for the selected genres. We then computed the mean popularity for each genre, ensuring that any missing values are ignored. The results are stored in avg_popularity_by_genre. Next, we used ggplot to create a bar chart that visualizes the average popularity of tracks across these genres. The genres are displayed on the x-axis, and the average popularity on the y-axis, with each bar colored uniquely by genre. We applied a minimalistic theme and rotate the genre names on the x-axis for better readability.\
+
+4)
+
+```{r}
+# Heatmap
+correlation_matrix <- cor(spotify2_data[sapply(spotify2_data, is.numeric)])
+
+heatmap(correlation_matrix, Rowv = NA, Colv = NA, col = heat.colors(256), scale="column", margins = c(5,10), cexRow = 0.5, cexCol = 0.5)
+```
+
+Here, we created a correlation matrix named correlation_matrix from numeric columns in the  dataset. We identified numeric columns using sapply and calculated pairwise correlations with the cor function. Next, we visualized this matrix as a heatmap using the heatmap function, applying a color scheme from heat.colors with 256 shades and adjusting visual settings like margins and text sizes for clarity. This visualization provided a concise and clear depiction of the relationships between numeric variables in the dataset.
+
+
+5) 
+
+```{r}
+ggplot(spotify2_data, aes(x = valence, y = popularity)) +
+  geom_smooth(method = "loess", se = FALSE, color = "blue") +  # Add a smoothed line without confidence interval
+  geom_point(alpha=0.5, color = "red") +  # Add points with reduced opacity
+  labs(title = "Relationship Between Valence and Popularity",
+       x = "Valence (Emotional Content)",
+       y = "Popularity") +
+  theme_minimal()
+```
+Here, we plotted valence against popularity to explore their relationship across a dataset of music tracks. We employed a smoothed line plot with a "loess" method to reveal underlying trends, showing how emotional content correlates with track popularity. Red points representing individual tracks are overlaid on a blue smooth line, providing both detailed data points and a general trend, respectively. This approach helped us discern patterns in how emotional tones might influence listener preferences.
+
+
+
+**Results / Summary of our Analysis :**
+
+From our comprehensive analysis of the dataset, we've unearthed several key insights into how musical characteristics such as tempo, valence, and energy vary by genre and influence track popularity on Spotify. Through our various data wrangling efforts, we discovered that genres like Pop and Electronic exhibit higher energy and tempos, which correlates with their higher popularity ratings on Spotify. This finding supports the notion that more energetic and upbeat music tends to be more popular among Spotify users.
+
+-   Our visualizations further highlighted these relationships, with the charts showing average popularity by genre indicating that certain genres consistently achieve higher popularity scores.
+
+-   The scatter plots and overlayed graphics revealed a clear trend where tracks with higher tempo and energy not only vary significantly across different genres but also tend to attract more listeners, leading to higher popularity.
+
+-   These visual patterns underscore the direct impact of these musical characteristics on listener preferences and track success on the platform.
+
+-   Moreover, the point smooth plots provided a deeper look into the distribution of valence and popularity within genres, illustrating how emotional content (valence) of tracks are intricately linked to their popularity. For example, tracks with high valence in genres such as Pop and Dance show a positive association with popularity, suggesting that tracks perceived as more positive are favored by listeners in these genres.
+
+In conclusion, our analysis not only answered our guiding research question but also shed light on the dynamic interplay between musical characteristics and their impact on a track's success on Spotify. By understanding these trends, music producers, artists, and marketers can better align their offerings with listener preferences, potentially enhancing user engagement and satisfaction. This study also paves the way for future research to explore other facets of music consumption and its implications in the digital music era.\
+\
+\
+\
+
+**Challenges Faced :**
+
+During our analysis, we encountered several challenges that enriched our learning experience.
+
+-   Initially, data quality issues such as missing values in key variables like tempo, valence, and popularity required us to perform data cleaning and imputation, potentially introducing biases. The dataset's complexity necessitated advanced data manipulation techniques, including merging multiple sources and transforming data formats, which were initially daunting.
+
+-   Additionally, the high dimensionality of the dataset posed a challenge in determining the most relevant features for our analysis, leading us to employ dimensionality reduction strategies.
+
+-   Creating meaningful visualizations also presented difficulties; we needed to carefully design our graphs to clearly communicate complex data relationships, requiring iterative refinement to balance aesthetic appeal with clarity.\
+    \
+
+**How did we overcome the challenges :**
+
+We implemented a series of strategic solutions.
+
+-   For issues related to data quality, such as missing values, we utilized median and mean imputation methods tailored to the specific data distributions within genres, thereby preserving the integrity of our analysis.
+
+-   We tackled the complexity of data manipulation by leveraging powerful R packages like tidyverse, which allowed us to efficiently filter, summarize, and transform the dataset. In addressing the high dimensionality of the data, we employed exploratory data analysis and dimensionality reduction techniques to focus on the most impactful variables.
+
+-   For visualization challenges, we iteratively refined our plots using ggplot2 to balance aesthetic appeal with clarity, ensuring that our findings were communicated effectively.
+
+-   Lastly, to ensure our results were interpretable and actionable, we continuously referred back to our initial research questions and the real-world context of the music industry, which guided our analysis and helped us provide meaningful insights.
