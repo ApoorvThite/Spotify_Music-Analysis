@@ -59,3 +59,61 @@ Each entry (case) represents a single track with variables such as artist, genre
 5. **Smooth Line Plot**: Valence vs Popularity (emotional tone analysis)
 
 ---
+
+## 📌 Summary of Findings
+
+- **Higher Tempo & Energy**: Genres like pop and electronic tend to be faster and more energetic, correlating with higher popularity.
+- **Valence & Popularity**: Tracks with higher emotional positivity ("valence") tend to be more popular, especially in genres like pop and dance.
+- **Genre Trends**: Certain genres consistently outperform others in terms of average popularity.
+
+---
+
+## 🧩 Challenges Faced
+
+- **Missing Data**: Handled via mean/median imputation
+- **High Dimensionality**: Applied feature selection and reduction techniques
+- **Visualization Complexity**: Iteratively refined plots for interpretability
+
+---
+
+## ✅ How We Overcame Them
+
+- Used `tidyverse` for powerful data wrangling
+- Employed modular functions for reusability and clarity
+- Visualized insights using best practices in `ggplot2`
+- Continuously aligned our analysis with the guiding research question
+
+---
+
+## 📁 File Structure
+
+```
+📦Spotify-Music-EDA
+┣ 📄 STAT184_Final_Project_Report.Rmd # Full R Markdown analysis report
+┣ 📄 dataset.csv # Main dataset (114k tracks)
+┣ 📄 README.md # Project overview
+┗ 📊 figures/ # (Optional) Save exported plots here
+
+```
+
+
+---
+
+## 📚 Learnings & Takeaways
+
+- Applied R for real-world music industry analysis
+- Understood how musical attributes affect track success
+- Learned to handle large datasets and perform feature engineering
+- Gained confidence in visual storytelling with data
+
+---
+
+## 📬 Contact
+
+For questions, feedback, or collaborations:
+
+- Apoorv Thite – [LinkedIn](https://www.linkedin.com/in/apoorvthite/)
+
+---
+
+📌 _This project was created as part of our final coursework for STAT 184 at Penn State, Spring 2024._
