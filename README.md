@@ -8,3 +8,11 @@ This project presents an exploratory data analysis (EDA) of a Spotify music data
 **Date:** April 25, 2024
 
 ---
+
+## 🔍 Research Question
+
+> *"How do the characteristics of music (like tempo, valence, and energy) vary by genre, and how do they influence a track's popularity on Spotify?"*
+
+This question drives our analysis and seeks to reveal actionable insights into genre-specific trends and the factors contributing to a track's popularity.
+
+---
