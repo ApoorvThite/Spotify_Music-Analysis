@@ -28,3 +28,34 @@ Each entry (case) represents a single track with variables such as artist, genre
 **Total Records:** 114,000
 
 ---
+
+## 🛠️ Tools & Libraries
+
+- `R`, `RMarkdown`
+- `dplyr`, `tidyverse`
+- `ggplot2`
+- Base R functions for heatmaps and data wrangling
+
+---
+
+## 🔄 Key Steps in Analysis
+
+### 📥 Data Loading & Cleaning
+- Imported `dataset.csv`
+- Removed missing values and unnecessary columns
+- Sampled 10% of data for quicker computation
+
+### 🧹 Data Wrangling
+- Filtered tracks by popularity score
+- Grouped and summarized musical attributes by genre
+- Used regex filtering (`grepl`) for thematic analysis (e.g., tracks with "Love")
+- Defined custom functions (e.g., tempo classification: Low, Medium, High)
+
+### 📈 Visualizations
+1. **Scatter Plot**: Tempo vs Popularity colored by tempo category
+2. **Bubble Chart**: Energy vs Popularity sized by duration
+3. **Bar Chart**: Average popularity by selected genres
+4. **Heatmap**: Correlation matrix between all numeric features
+5. **Smooth Line Plot**: Valence vs Popularity (emotional tone analysis)
+
+---
