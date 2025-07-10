@@ -16,3 +16,15 @@ This project presents an exploratory data analysis (EDA) of a Spotify music data
 This question drives our analysis and seeks to reveal actionable insights into genre-specific trends and the factors contributing to a track's popularity.
 
 ---
+
+## 📊 Datasets Used
+
+We used two publicly available datasets for our analysis:
+
+- **Primary Dataset (Kaggle):** [Spotify Tracks Dataset](https://www.kaggle.com/datasets/maharshipandya/-spotify-tracks-dataset?select=dataset.csv)  
+- **Secondary Dataset (DataCamp):** [Spotify Music Data (DataCamp Workspace)](https://www.datacamp.com/datalab/w/e6817000-4a9f-40fa-b74f-1d23b9cdb6cb/edit)
+
+Each entry (case) represents a single track with variables such as artist, genre, tempo (BPM), energy, danceability, loudness, valence, speechiness, acousticness, and popularity.  
+**Total Records:** 114,000
+
+---
